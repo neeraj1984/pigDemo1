@@ -1,0 +1,44 @@
+/* Create a sample dataset and implement the below Pig commands on the same dataset.
+1) Concat
+2) Tokenize
+3) Sum
+4) Min
+5) Max
+6) Limit
+7) Store
+8) Distinct
+9) Flatten
+10) IsEmpty
+*/
+/* I have created a sample text file having employees details */
+
+data = load 'hdfs://localhost:9000/user/neeraj/Assignment_2_dataset.txt' using PigStorage(',') AS(empId:int,empFirstName:chararray,empLastName:chararray,city:chararray,address1:chararray,
+address2:chararray,pincode:int,salary:bigint,empDesignation:chararray);
+
+/* using Concat() */
+A = foreach data generate empId,CONCAT(empFirstName, empLastName);
+/* using Tokenize() */
+B = foreach data Generate TOKENIZE(empDesignation);
+/* get the total salary of employees from mumbai using SUM()*/
+C = group data by city;
+D = foreach C generate group,SUM($1.salary);
+
+/* get the employee having minimum salary using LIMIT */
+E = order data by salary desc;
+F = LIMIT E 1;
+
+/* getting min and max salaries for each city employees using Min() and Max() */
+G = group data by city;
+H = foreach G generate group,min($1.salary) as minimumSalary,max($1.salary) as maxSalary;
+
+/* using distinct and flatten */
+I = group data by city;
+J = foreach I generate flatten($1);
+K = distinct data; /* last record from file will be skipped as this is the only duplicate record */
+
+/* check bag with IsEmpty() */
+L = group data ALL;
+M = filter L by NOT IsEmpty(L);
+
+/* store */
+store  M into 'hdfs://localhost:9000/user/output/' using PigStorage(',');

@@ -1,0 +1,9 @@
+/* Write a word count program using pig */
+
+A = load 'hdfs://localhost:9000/user/neeraj/testfile.txt' AS (text:chararray);
+B = FOREACH A GENERATE FLATTEN(TOKENIZE(text,' ')) AS word;
+C = Group B by word;
+D = FOREACH C generate group,COUNT($1);
+dump D;
+
+Note: Allowed operations inside FOREACH ...GENERATE are DISTINCT, FILTER, LIMIT, ORDER and SAMPLE.

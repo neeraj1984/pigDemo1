@@ -1,0 +1,8 @@
+designationId,designation
+1,System Engineer
+2,Senior Engineer
+3,Test Engineer
+4,Business Analyst
+5,Project Manager
+6,System Analyst
+7,DBA
